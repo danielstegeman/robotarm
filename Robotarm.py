@@ -1,13 +1,23 @@
 from adafruit_servokit import ServoKit
 import time
+import threading
 
-class RobotArm:
+class Order (threading.Thread):
     connectedServoAmount = 6
     #[[sevo angle set as 0, translation direction(-1,+1)]]
     angleTranslation = [[90,1],[0,1],[180,-1],[120,1],[90,1],[0,1]]
     kit = ServoKit(channels=16)
-    def __init__(self):
-        self.parkArm()
+    def __init__(self,animationDuration, movementTarget):
+        super().__init__(self)
+        #self.parkArm()
+        self.TargetPosition = []
+        self.interupt = False
+        self.animationDuration = animationDuration
+        self.movementTarget = movementTarget
+        self.orderComplete = False
+
+    def run(self):
+        self.animateToPosition(self.movementTarget,self.animationDuration)
         
     def parkArm(self):
         parkAngles = [0,80,10,-90,0,80]
@@ -48,6 +58,8 @@ class RobotArm:
             for j in range(len(movementPerMs)):
                 self.kit.servo[j].angle=self.kit.servo[j].angle+movementPerMs[j]
             time.sleep(0.1)
+        self.orderComplete = True
+    
         
         
         
