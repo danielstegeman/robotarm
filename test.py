@@ -1,5 +1,5 @@
 #import gpio
-import adafruit_pca9685
+
 from adafruit_servokit import ServoKit
 import time
 import enum
@@ -16,7 +16,7 @@ target = [0,100,-110,0,45,0]
 # #robot.animateToPosition(target,20)
 # robot.setPosition(target)
 #robot.animateToPosition(parkAngles,20)
-
+idcounter = 0
 
 orderDict = {
         "OrderId":0, #unique id given to each order for modification
@@ -33,4 +33,16 @@ def SendOrder():
     
     sock.sendall(data)
     sock.sendall(data)
+    
+def prepareOrder(animationDuration,targetPosition = None, command = None, insertionMode = None):
+    orderDict = {
+        "OrderId":idcounter,
+        "AnimationDuration": animationDuration}
+    if targetPosition != None:
+        orderDict["TargetPosition"] = targetPosition
+    if command != None:
+        orderDict["Command"] = command
+    if insertionMode != None:
+        orderDict["InsertionMode"] = insertionMode
+    return orderDict
 SendOrder()
