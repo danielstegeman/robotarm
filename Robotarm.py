@@ -7,9 +7,10 @@ class Order (threading.Thread):
     #[[sevo angle set as 0, translation direction(-1,+1)]]
     angleTranslation = [[90,1],[0,1],[180,-1],[120,1],[90,1],[0,1]]
     kit = ServoKit(channels=16)
-    def __init__(self,animationDuration, movementTarget):
-        super().__init__(self)
+    def __init__(self,orderId,movementTarget,animationDuration):
+        super().__init__()
         #self.parkArm()
+        self.orderId = orderId
         self.TargetPosition = []
         self.interupt = False
         self.animationDuration = animationDuration
@@ -59,6 +60,7 @@ class Order (threading.Thread):
                 self.kit.servo[j].angle=self.kit.servo[j].angle+movementPerMs[j]
             time.sleep(0.1)
         self.orderComplete = True
+        print(f"Order {self.orderId} complete")
     
         
         

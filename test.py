@@ -25,16 +25,9 @@ orderDict = {
         "InsertionMode":"First/Interrupt", #Adds the order to the front of the queue to be executed after
         "Command":"Park/Hold"
         }
-      
-def SendOrder():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('localhost',5000))
-    data = pickle.dumps(orderDict)
-    
-    sock.sendall(data)
-    sock.sendall(data)
-    
-def prepareOrder(animationDuration,targetPosition = None, command = None, insertionMode = None):
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+def sendOrder(animationDuration,targetPosition = None, command = None, insertionMode = None):
     orderDict = {
         "OrderId":idcounter,
         "AnimationDuration": animationDuration}
@@ -44,5 +37,12 @@ def prepareOrder(animationDuration,targetPosition = None, command = None, insert
         orderDict["Command"] = command
     if insertionMode != None:
         orderDict["InsertionMode"] = insertionMode
-    return orderDict
-SendOrder()
+    data = pickle.dumps(orderDict)
+    sock.sendall(data)
+    
+
+
+sock.connect(('localhost',5000))   
+
+sendOrder(20,targetPosition=target)
+sendOrder(10,targetPosition=parkAngles)

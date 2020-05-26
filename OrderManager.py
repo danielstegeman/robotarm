@@ -6,23 +6,24 @@ import pickle
 import Robotarm
 import threading
 from Robotarm import Order
+orderManager = None
 
 class SocketHandler(socketserver.StreamRequestHandler):
-    orderManager = None
+
     def handle(self):
+
         data = self.rfile.readline()
-        pickle.loads(data)
-        self.orderManager.recievedOrders.put(data)
+        order = pickle.loads(data)
+        self.server.orderManager.recievedOrders.put(order)
+        print(order)
 
-class ServerHandler(threading.Thread):
-    def __init__(self, orderManager):
-        super().__init__(self)
+class ServerHandler(socketserver.TCPServer):
+     def __init__(self, host_port_tuple, streamhandler, orderManager):
+        super().__init__(host_port_tuple, streamhandler)
         self.orderManager = orderManager
-
-    def run(self):
-        self.socket = socketserver.TCPServer(('localhost',5000),SocketHandler)
-        self.clientSocket = None
-        self.socket.serve_forever()
+    
+        
+        
     
 class OrderManager:
     orderDict = {
@@ -37,20 +38,28 @@ class OrderManager:
         "Status":"Queued/Running/Done",
         "Error":"Message"
     }
+    commands={
+        "Park" :[0,80,10,-90,0,80]
+
+    }
     
 
     def __init__(self):
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()
-        SocketHandler.orderManager = self
-        serverThread = ServerHandler(self)
-        serverThread.run()
+        self.socket = ServerHandler(('localhost',5000),SocketHandler,self)
+        self.clientSocket = None
+        self.server_thread = threading.Thread(target=self.socket.serve_forever)
+        # Exit the server thread when the main thread terminates
+        self.server_thread.daemon = True
+        self.server_thread.start()
         self.manageOrders()
 
     def manageOrders(self):
-        while True:    
+        while True:
             self.processIncomingOrders()
+            self.manageRunningOrder()
             
     def manageRunningOrder(self):
         if self.runningOrder != None:
@@ -58,23 +67,24 @@ class OrderManager:
                 self.runningOrder = None
         elif self.orderQueue:
             self.runningOrder = self.orderQueue.popleft()
+            self.runningOrder.start()
+        
         
 
-            
-
-
     def processIncomingOrders(self):
+        
         while not self.recievedOrders.empty():
             order = self.recievedOrders.get()
-            if "TargetPosition" in order and "AnimationDuration" in order:
-                orderThread = Order(order["TargetPosition"],order["AnimationDuration"])
-                self.orderQueue.append(orderThread)
-            
-        return order
+            if "AnimationDuration" in order:
+                if "TargetPosition" in order:
+                    orderThread = Order(order["OrderId"],order["TargetPosition"],order["AnimationDuration"])
+                    self.orderQueue.append(orderThread)
+                if "Command" in order:
+                    if order["Command"] in self.commands:
+                        orderThread = Order(order["OrderId"],self.commands[order["Command"]],order["AnimationDuration"])
+                        self.orderQueue.append(orderThread)
+       
                 
-
-
-
     def getInsertionMode(self, order):
         if "InsertionMode" in order:
             interrupt=False
@@ -94,5 +104,5 @@ class OrderManager:
     
 
 
-orderManager = OrderManager()
+manager = OrderManager()
     
