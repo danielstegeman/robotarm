@@ -6,6 +6,7 @@ import pickle
 import Robotarm
 import threading
 from Robotarm import Order
+import multiprocessing
 orderManager = None
 
 class SocketHandler(socketserver.StreamRequestHandler):
@@ -54,6 +55,7 @@ class OrderManager:
         # Exit the server thread when the main thread terminates
         self.server_thread.daemon = True
         self.server_thread.start()
+        self.process = None
         self.manageOrders()
 
     def manageOrders(self):
@@ -63,11 +65,14 @@ class OrderManager:
             
     def manageRunningOrder(self):
         if self.runningOrder != None:
-            if not self.runningOrder.isAlive():
+            if not self.process.is_alive():
+                self.process.join()
+                self.process = None
                 self.runningOrder = None
         elif self.orderQueue:
             self.runningOrder = self.orderQueue.popleft()
-            self.runningOrder.start()
+            self.process = multiprocessing.Process(target=self.runningOrder.run)
+            self.process.start()
         
         
 
