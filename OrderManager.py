@@ -12,16 +12,20 @@ orderManager = None
 class SocketHandler(socketserver.StreamRequestHandler):
 
     def handle(self):
-
-        data = self.rfile.readline()
-        order = pickle.loads(data)
-        self.server.orderManager.recievedOrders.put(order)
-        print(order)
+        
+        data = self.rfile.read()
+        for splitData in data.split(b"|"):
+            if len(splitData)>2:
+                order = pickle.loads(splitData)
+                self.server.orderManager.recievedOrders.put(order)
+                print(order)
 
 class ServerHandler(socketserver.TCPServer):
      def __init__(self, host_port_tuple, streamhandler, orderManager):
         super().__init__(host_port_tuple, streamhandler)
+        self.allow_reuse_address = True
         self.orderManager = orderManager
+        #self.allow_reuse_address = True
     
         
         
@@ -49,13 +53,16 @@ class OrderManager:
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()
-        self.socket = ServerHandler(('localhost',5000),SocketHandler,self)
+        self.socket = ServerHandler(('localhost',5002),SocketHandler,self)
+        
         self.clientSocket = None
         self.server_thread = threading.Thread(target=self.socket.serve_forever)
         # Exit the server thread when the main thread terminates
         self.server_thread.daemon = True
         self.server_thread.start()
         self.process = None
+        order = Order(0,[],0)
+        order.parkArm()
         self.manageOrders()
 
     def manageOrders(self):

@@ -38,11 +38,13 @@ def sendOrder(animationDuration,targetPosition = None, command = None, insertion
     if insertionMode != None:
         orderDict["InsertionMode"] = insertionMode
     data = pickle.dumps(orderDict)
-    sock.sendall(data)
+    data = data + b"|"
+    sock.sendall(data) #use socket instance here
+    print(data)
     
 
 
-sock.connect(('localhost',5000))   
+sock.connect(('localhost',5002))   
 
-sendOrder(20,targetPosition=target)
-sendOrder(10,targetPosition=parkAngles)
+sendOrder(20,command= "Park")
+sendOrder(10,targetPosition=target)
