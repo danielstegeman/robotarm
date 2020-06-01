@@ -44,7 +44,7 @@ def sendOrder(animationDuration,targetPosition = None, command = None, insertion
     
 
 
-sock.connect(('localhost',5002))   
+sock.bind(('raspberrypi.local',5002))   
 
 sendOrder(20,command= "Park")
 sendOrder(10,targetPosition=target)

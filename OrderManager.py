@@ -1,13 +1,18 @@
+UseRobot = False
+
 import queue
 import collections
 import socketserver
 import socket
 import pickle
-import Robotarm
 import threading
-from Robotarm import Order
+if UseRobot:
+    import Robotarm
+    from Robotarm import Order
 import multiprocessing
 orderManager = None
+
+
 
 class SocketHandler(socketserver.StreamRequestHandler):
 
@@ -36,15 +41,19 @@ class OrderManager:
         "TargetPosition":[], #array of 6 angles as a target. exclusive with command
         "AnimationDuration": 0, #duration of the animation in deciseconds
         "InsertionMode":"Front","Interrupt" #Adds the order to the front of the queue to be executed after the current order
-        "Command":"Park/Hold" #park or hold position after order. exclusive with targetposition
-        }
+        "Command":"Park/Hold" #park or hold position after order. exclusive with targetposition      
+    }
     responseDict = {
         "OrderId":0,
         "Status":"Queued/Running/Done",
         "Error":"Message"
     }
     commands={
-        "Park" :[0,80,10,-90,0,80]
+        "Park" :[0,80,10,-90,0,80],
+        "Rock":[0,80,10,-90,0,80],
+        "Paper":[0,80,10,-90,0,80],
+        "Cissor":[0,80,10,-90,0,80]
+
 
     }
     
@@ -53,22 +62,24 @@ class OrderManager:
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()
-        self.socket = ServerHandler(('localhost',5002),SocketHandler,self)
-        
+        self.socket = ServerHandler((socket.gethostname(),5002),SocketHandler,self)
+        print(socket.gethostname())
         self.clientSocket = None
         self.server_thread = threading.Thread(target=self.socket.serve_forever)
         # Exit the server thread when the main thread terminates
         self.server_thread.daemon = True
         self.server_thread.start()
         self.process = None
-        order = Order(0,[],0)
-        order.parkArm()
+        if UseRobot:
+            order = Order(0,[],0)
+            order.parkArm()
         self.manageOrders()
 
     def manageOrders(self):
         while True:
-            self.processIncomingOrders()
-            self.manageRunningOrder()
+            if UseRobot:
+                self.processIncomingOrders()
+                self.manageRunningOrder()
             
     def manageRunningOrder(self):
         if self.runningOrder != None:
