@@ -12,6 +12,8 @@ if UseRobot:
 import multiprocessing
 orderManager = None
 
+HOST = 'localhost'
+PORT = 5002
 
 
 class SocketHandler(socketserver.StreamRequestHandler):
@@ -62,8 +64,8 @@ class OrderManager:
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()
-        self.socket = ServerHandler((socket.gethostname(),5002),SocketHandler,self)
-        print(socket.gethostname())
+        self.socket = ServerHandler((HOST,PORT),SocketHandler,self)
+    
         self.clientSocket = None
         self.server_thread = threading.Thread(target=self.socket.serve_forever)
         # Exit the server thread when the main thread terminates
