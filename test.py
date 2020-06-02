@@ -1,12 +1,12 @@
 #import gpio
 
-from adafruit_servokit import ServoKit
+# from adafruit_servokit import ServoKit
 import time
 import enum
-from Robotarm import Order
+# from Robotarm import Order
 import socket
 import pickle
-kit = ServoKit(channels=16)
+# kit = ServoKit(channels=16)
 
 parkAngles = [0,80,10,-90,0,80]
 target = [0,100,-110,0,45,0]
@@ -44,7 +44,7 @@ def sendOrder(animationDuration,targetPosition = None, command = None, insertion
     
 
 
-sock.bind(('raspberrypi.local',5002))   
+sock.connect(('192.168.2.74',54583))   
 
 sendOrder(20,command= "Park")
 sendOrder(10,targetPosition=target)
