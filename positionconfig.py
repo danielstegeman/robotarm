@@ -3,8 +3,28 @@ import time
 switchDelay = 0.3
 anglechangeDelay = 0.1
 index = 0
+
 angles = [90,90,90,90,90,90]
 limits = [[0,180],[0,180],[0,180],[0,180],[0,180],[0,180]]
+
+class _Getch:       
+    def __call__(self):
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(1)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
+
+def get():
+    inkey = _Getch()
+    while(1):
+            k=inkey()
+            if k!='':break
+    print(f"you pressed {ord(k)}")
+    
 
 def changeAngle(angle):
     if angles[index] + angle >= limits[index][0] and angles[index] +angle <= limits[index][1]:

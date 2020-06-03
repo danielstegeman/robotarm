@@ -44,7 +44,10 @@ def sendOrder(animationDuration,targetPosition = None, command = None, insertion
     
 
 
-sock.connect(('192.168.2.74',54583))   
+sock.connect(('localhost',45283))   
 
-sendOrder(20,command= "Park")
-sendOrder(10,targetPosition=target)
+sendOrder(1,command= "Raise")
+sendOrder(1,command="Lower")
+sendOrder(1,command="Raise")
+sendOrder(1,command="Lower")
+sendOrder(3,command="Park")

@@ -1,4 +1,4 @@
-UseRobot = False
+UseRobot = True
 
 import queue
 import collections
@@ -13,7 +13,7 @@ import multiprocessing
 orderManager = None
 
 HOST = 'localhost'
-PORT = 5002
+PORT = 0
 
 
 class SocketHandler(socketserver.StreamRequestHandler):
@@ -32,6 +32,7 @@ class ServerHandler(socketserver.TCPServer):
         super().__init__(host_port_tuple, streamhandler)
         self.allow_reuse_address = True
         self.orderManager = orderManager
+        print(self.server_address)
         #self.allow_reuse_address = True
     
         
@@ -51,11 +52,12 @@ class OrderManager:
         "Error":"Message"
     }
     commands={
-        "Park" :[0,80,10,-90,0,80],
+        "Park" :[0,0,20,-10,0,70],
         "Rock":[0,80,10,-90,0,80],
         "Paper":[0,80,10,-90,0,80],
-        "Cissor":[0,80,10,-90,0,80]
-
+        "Cissor":[0,80,10,-90,0,80],
+        "Raise":[0, 20, -50, 70, -80, 40],
+        "Lower":[0, 0, -40, 50, -80, 40]
 
     }
     

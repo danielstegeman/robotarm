@@ -5,7 +5,7 @@ import threading
 class Order:
     connectedServoAmount = 6
     #[[sevo angle set as 0, translation direction(-1,+1)]]
-    angleTranslation = [[90,1],[0,1],[190,-1],[120,1],[90,1],[0,1]]
+    angleTranslation = [[90,1],[130,1],[130,1],[40,1],[90,1],[0,1]]
     kit = ServoKit(channels=16)
     
     def __init__(self,orderId,movementTarget,animationDuration):
@@ -22,7 +22,7 @@ class Order:
         self.animateToPosition(self.movementTarget,self.animationDuration)
         
     def parkArm(self):
-        parkAngles = [0,80,10,-90,0,80]
+        parkAngles = [0,0,20,-10,0,70]
         for i in range(self.connectedServoAmount):
             self.kit.servo[i].angle = self.translateAngle(i,parkAngles[i])
 
