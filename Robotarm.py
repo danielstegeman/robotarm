@@ -19,7 +19,8 @@ class Order:
         self.orderComplete = False
 
     def run(self):
-        self.animateToPosition(self.movementTarget,self.animationDuration)
+        #self.animateToPosition(self.movementTarget,self.animationDuration)
+        self.setPosition(self.movementTarget)
         
     def parkArm(self):
         parkAngles = [0,0,20,-10,0,70]
@@ -47,6 +48,7 @@ class Order:
         return servoPositions
 
     def animateToPosition(self,targetAngleArray,animationDuration):
+
         servoTargets = self.translateAngleArray(targetAngleArray)
         currentPositions = self.getCurrentServoPositions()
         movementPerMs = []

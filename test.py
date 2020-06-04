@@ -1,7 +1,7 @@
 #import gpio
 
 # from adafruit_servokit import ServoKit
-import time
+import time, random
 import enum
 # from Robotarm import Order
 import socket
@@ -40,14 +40,28 @@ def sendOrder(animationDuration,targetPosition = None, command = None, insertion
     data = pickle.dumps(orderDict)
     data = data + b"|"
     sock.sendall(data) #use socket instance here
-    print(data)
+    #print(data)
     
 
+x = random.randrange(3)
+sock.connect(('localhost',34821))   
 
-sock.connect(('localhost',45283))   
+sendOrder(10,command= "Raise")
+sendOrder(10,command="Lower")
+sendOrder(10,command="Raise")
+sendOrder(10,command="Lower")
+sendOrder(10,command = "Raise")
+startTime = time.perf_counter()
+if(x == 0):
+    sendOrder(10,command="Rock")
+    print("rock")
+elif x==1:
+    sendOrder(10,command="Paper")
+    print("paper")
+elif x ==2:
+    sendOrder(10,command="Cissor")
+    print("cissors")
 
-sendOrder(1,command= "Raise")
-sendOrder(1,command="Lower")
-sendOrder(1,command="Raise")
-sendOrder(1,command="Lower")
-sendOrder(3,command="Park")
+# while(time.perf_counter()- startTime <30):
+#     continue
+sendOrder(10,command="Park")
