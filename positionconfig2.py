@@ -1,10 +1,10 @@
 import adafruit_servokit
 index = 0
-angleTranslation = [[90,1],[130,1],[130,1],[40,1],[90,1],[0,1]]
-angles = [0, 0, -40, 50, 0, 40]
+angleTranslation = [[90,1],[90,1],[130,1],[40,1],[90,1],[0,1]]
+angles = [0, 70, -50, 90, -80, 0]
 park = [0,0,20,-10,0,70]
 limits = [[0,180],[0,180],[0,180],[0,180],[0,180],[0,70]]
-limits2 = [[-90,90],[-130,50],[-130,150],[-40,120],[-90,90],[0,70]]
+limits2 = [[-90,90],[-90,90],[-130,150],[-40,120],[-90,90],[0,70]]
 kit = adafruit_servokit.ServoKit(channels = 16)
 def switchServo(direction):
     global index

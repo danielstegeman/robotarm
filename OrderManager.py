@@ -51,6 +51,7 @@ class OrderManager:
         "Status":"Queued/Running/Done",
         "Error":"Message"
     }
+    
     commands={
         "Park" :[0,0,20,-10,0,70],
         "Rock":[0, 0, -40, 50, 0, 0],
@@ -60,9 +61,26 @@ class OrderManager:
         "Lower":[0, 0, -40, 50, -80, 0]
 
     }
-    
+    commands2={
+        "Park" :[0,0,20,-10,0,70],
+        "Rock":[0, 20, -50, 130, 0, 0],
+        "Paper":[0, 20, -50, 130, -90, 45],
+        "Cissor":[0, 20, -50, 130, 0, 55],
+        "Raise":[0, 70, -50, 90, -80, 0],
+        "Lower":[0, 20, -50, 130, -80, 0]
+    }
+    commands3={
+        "Park" :[0,0,20,-10,0,70],
+        "Rock":[0, 80, -50, 20, 0, 0],
+        "Paper":[0, 80, -50, 20, -90, 45],
+        "Cissor":[0, 80, -50, 20, 0, 55],
+        "Raise":[0, 80, -50, 50, -80, 0],
+        "Lower":[0, 80, -50, 20, -80, 0]
+    }
+#[0, 25, -50, 70, -80, 0]
 
     def __init__(self):
+        self.commandDict = self.commands3
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()
@@ -77,7 +95,10 @@ class OrderManager:
         if UseRobot:
             order = Order(0,[],0)
             order.parkArm()
-        self.manageOrders()
+        self.manager_thread = threading.Thread(target=self.manageOrders)
+        self.manager_thread.daemon = True
+        self.manager_thread.start()
+        #self.manageOrders()
 
     def manageOrders(self):
         while True:
@@ -107,8 +128,8 @@ class OrderManager:
                     orderThread = Order(order["OrderId"],order["TargetPosition"],order["AnimationDuration"])
                     self.orderQueue.append(orderThread)
                 if "Command" in order:
-                    if order["Command"] in self.commands:
-                        orderThread = Order(order["OrderId"],self.commands[order["Command"]],order["AnimationDuration"])
+                    if order["Command"] in self.commandDict:
+                        orderThread = Order(order["OrderId"],self.commandDict[order["Command"]],order["AnimationDuration"])
                         self.orderQueue.append(orderThread)
        
                 

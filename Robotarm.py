@@ -5,7 +5,7 @@ import threading
 class Order:
     connectedServoAmount = 6
     #[[sevo angle set as 0, translation direction(-1,+1)]]
-    angleTranslation = [[90,1],[130,1],[130,1],[40,1],[90,1],[0,1]]
+    angleTranslation = [[90,1],[90,1],[130,1],[40,1],[90,1],[0,1]]
     kit = ServoKit(channels=16)
     
     def __init__(self,orderId,movementTarget,animationDuration):
