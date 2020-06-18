@@ -80,7 +80,7 @@ class OrderManager:
 #[0, 25, -50, 70, -80, 0]
 
     def __init__(self):
-        self.commandDict = self.commands3
+        self.commandDict = self.commands2
         self.orderQueue = collections.deque()
         self.runningOrder = None
         self.recievedOrders = queue.Queue()

@@ -81,11 +81,13 @@ def rpsdemo():
 
 
 def betterrps():
-    sendOrder(duration, command="Raise")
+    
     while True:
         i = input()
-        if(i == 's'):
+        if(i == "f"):
             sendOrder(duration, command="Raise")
+        if(i == 's'):
+            
             sendOrder(duration, command="Lower")
             sendOrder(duration, command="Raise")
             sendOrder(duration, command="Lower")
@@ -117,8 +119,8 @@ def betterrps():
             sendOrder(10,command="Park")
             # while manager.manager_thread.is_alive():
             #     continue
-            manager.manager_thread.join()
-            break
+            #manager.manager_thread.join()
+            
 
 
 #rpsdemo()
